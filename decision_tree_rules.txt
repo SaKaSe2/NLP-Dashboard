@@ -1,0 +1,247 @@
+======================================================================
+EKSPERIMEN 1: POHON KEPUTUSAN (DT + Bag of Words)
+======================================================================
+Kedalaman Pohon  : 5
+Jumlah Daun      : 29
+Jumlah Fitur     : 1000
+----------------------------------------------------------------------
+|--- wheat <= 0.50
+|   |--- corn <= 0.50
+|   |   |--- sugar <= 0.50
+|   |   |   |--- coffee <= 0.50
+|   |   |   |   |--- maize <= 0.50
+|   |   |   |   |   |--- class: 2
+|   |   |   |   |--- maize >  0.50
+|   |   |   |   |   |--- class: 1
+|   |   |   |--- coffee >  0.50
+|   |   |   |   |--- came <= 0.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- came >  0.50
+|   |   |   |   |   |--- class: 0
+|   |   |--- sugar >  0.50
+|   |   |   |--- cocoa <= 0.50
+|   |   |   |   |--- aid <= 0.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- aid >  0.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- cocoa >  0.50
+|   |   |   |   |--- york <= 2.00
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- york >  2.00
+|   |   |   |   |   |--- class: 0
+|   |--- corn >  0.50
+|   |   |--- soybean <= 1.50
+|   |   |   |--- showed <= 0.50
+|   |   |   |   |--- oil <= 3.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- oil >  3.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- showed >  0.50
+|   |   |   |   |--- rather <= 0.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- rather >  0.50
+|   |   |   |   |   |--- class: 0
+|   |   |--- soybean >  1.50
+|   |   |   |--- look <= 0.50
+|   |   |   |   |--- class: 0
+|   |   |   |--- look >  0.50
+|   |   |   |   |--- general <= 0.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- general >  0.50
+|   |   |   |   |   |--- class: 0
+|--- wheat >  0.50
+|   |--- corn <= 0.50
+|   |   |--- soybean <= 1.50
+|   |   |   |--- wheat <= 11.50
+|   |   |   |   |--- valued <= 1.50
+|   |   |   |   |   |--- class: 1
+|   |   |   |   |--- valued >  1.50
+|   |   |   |   |   |--- class: 2
+|   |   |   |--- wheat >  11.50
+|   |   |   |   |--- class: 1
+|   |   |--- soybean >  1.50
+|   |   |   |--- product <= 0.50
+|   |   |   |   |--- market <= 1.00
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- market >  1.00
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- product >  0.50
+|   |   |   |   |--- class: 0
+|   |--- corn >  0.50
+|   |   |--- soybean <= 0.50
+|   |   |   |--- cotton <= 0.50
+|   |   |   |   |--- day <= 0.50
+|   |   |   |   |   |--- class: 1
+|   |   |   |   |--- day >  0.50
+|   |   |   |   |   |--- class: 1
+|   |   |   |--- cotton >  0.50
+|   |   |   |   |--- estimate <= 0.50
+|   |   |   |   |   |--- class: 1
+|   |   |   |   |--- estimate >  0.50
+|   |   |   |   |   |--- class: 1
+|   |   |--- soybean >  0.50
+|   |   |   |--- petroleum <= 1.00
+|   |   |   |   |--- sale <= 7.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- sale >  7.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- petroleum >  1.00
+|   |   |   |   |--- nine <= 2.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- nine >  2.50
+|   |   |   |   |   |--- class: 0
+
+
+======================================================================
+EKSPERIMEN 2: POHON KEPUTUSAN (DT + N-gram / Bigram)
+======================================================================
+Kedalaman Pohon  : 5
+Jumlah Daun      : 18
+Jumlah Fitur     : 1000
+----------------------------------------------------------------------
+|--- tonne wheat <= 0.50
+|   |--- international coffee <= 0.50
+|   |   |--- agriculture department <= 0.50
+|   |   |   |--- palm oil <= 0.50
+|   |   |   |   |--- record mln <= 2.00
+|   |   |   |   |   |--- class: 2
+|   |   |   |   |--- record mln >  2.00
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- palm oil >  0.50
+|   |   |   |   |--- mln tonne <= 3.00
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- mln tonne >  3.00
+|   |   |   |   |   |--- class: 0
+|   |   |--- agriculture department >  0.50
+|   |   |   |--- deficiency payment <= 0.50
+|   |   |   |   |--- vegetable oil <= 0.50
+|   |   |   |   |   |--- class: 2
+|   |   |   |   |--- vegetable oil >  0.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- deficiency payment >  0.50
+|   |   |   |   |--- dlrs per <= 0.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- dlrs per >  0.50
+|   |   |   |   |   |--- class: 1
+|   |--- international coffee >  0.50
+|   |   |--- stock rule <= 0.50
+|   |   |   |--- class: 0
+|   |   |--- stock rule >  0.50
+|   |   |   |--- posted price <= 0.50
+|   |   |   |   |--- class: 0
+|   |   |   |--- posted price >  0.50
+|   |   |   |   |--- class: 0
+|--- tonne wheat >  0.50
+|   |--- net sale <= 0.50
+|   |   |--- soviet union <= 0.50
+|   |   |   |--- tonne barley <= 0.50
+|   |   |   |   |--- last month <= 0.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- last month >  0.50
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- tonne barley >  0.50
+|   |   |   |   |--- class: 1
+|   |   |--- soviet union >  0.50
+|   |   |   |--- agriculture department <= 0.50
+|   |   |   |   |--- soviet union <= 2.50
+|   |   |   |   |   |--- class: 1
+|   |   |   |   |--- soviet union >  2.50
+|   |   |   |   |   |--- class: 1
+|   |   |   |--- agriculture department >  0.50
+|   |   |   |   |--- class: 0
+|   |--- net sale >  0.50
+|   |   |--- class: 0
+
+
+======================================================================
+EKSPERIMEN 3: POHON KEPUTUSAN (DT + TF-IDF)
+======================================================================
+Kedalaman Pohon  : 5
+Jumlah Daun      : 29
+Jumlah Fitur     : 1000
+----------------------------------------------------------------------
+|--- wheat <= 0.06
+|   |--- corn <= 0.08
+|   |   |--- sugar <= 0.12
+|   |   |   |--- coffee <= 0.13
+|   |   |   |   |--- maize <= 0.04
+|   |   |   |   |   |--- class: 2
+|   |   |   |   |--- maize >  0.04
+|   |   |   |   |   |--- class: 1
+|   |   |   |--- coffee >  0.13
+|   |   |   |   |--- remain <= 0.05
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- remain >  0.05
+|   |   |   |   |   |--- class: 0
+|   |   |--- sugar >  0.12
+|   |   |   |--- de <= 0.04
+|   |   |   |   |--- cash <= 0.03
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- cash >  0.03
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- de >  0.04
+|   |   |   |   |--- today <= 0.02
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- today >  0.02
+|   |   |   |   |   |--- class: 0
+|   |--- corn >  0.08
+|   |   |--- soybean <= 0.09
+|   |   |   |--- increase <= 0.09
+|   |   |   |   |--- chairman <= 0.03
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- chairman >  0.03
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- increase >  0.09
+|   |   |   |   |--- vegetable <= 0.09
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- vegetable >  0.09
+|   |   |   |   |   |--- class: 0
+|   |   |--- soybean >  0.09
+|   |   |   |--- late <= 0.02
+|   |   |   |   |--- began <= 0.09
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- began >  0.09
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- late >  0.02
+|   |   |   |   |--- loan <= 0.02
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- loan >  0.02
+|   |   |   |   |   |--- class: 0
+|--- wheat >  0.06
+|   |--- corn <= 0.05
+|   |   |--- soybean <= 0.17
+|   |   |   |--- port <= 0.02
+|   |   |   |   |--- cash <= 0.08
+|   |   |   |   |   |--- class: 1
+|   |   |   |   |--- cash >  0.08
+|   |   |   |   |   |--- class: 2
+|   |   |   |--- port >  0.02
+|   |   |   |   |--- class: 1
+|   |   |--- soybean >  0.17
+|   |   |   |--- oil <= 0.04
+|   |   |   |   |--- support <= 0.10
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- support >  0.10
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- oil >  0.04
+|   |   |   |   |--- class: 0
+|   |--- corn >  0.05
+|   |   |--- soybean <= 0.02
+|   |   |   |--- farmer <= 0.10
+|   |   |   |   |--- government <= 0.08
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- government >  0.08
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- farmer >  0.10
+|   |   |   |   |--- figure <= 0.03
+|   |   |   |   |   |--- class: 1
+|   |   |   |   |--- figure >  0.03
+|   |   |   |   |   |--- class: 1
+|   |   |--- soybean >  0.02
+|   |   |   |--- three <= 0.02
+|   |   |   |   |--- usda <= 0.03
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- usda >  0.03
+|   |   |   |   |   |--- class: 0
+|   |   |   |--- three >  0.02
+|   |   |   |   |--- class: 0
