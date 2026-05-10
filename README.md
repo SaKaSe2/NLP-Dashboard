@@ -1,13 +1,14 @@
-# 🌾 NLP Text Classification & Dashboard - Agriculture
+# NLP Multi-Label Text Classification Dashboard
 
-Repositori ini berisi **Aplikasi Web Interaktif (Dashboard)** dan **Kode Sumber Data Mining** untuk memproses *multi-label text classification* pada artikel pertanian (41 kategori) menggunakan algoritma **Decision Tree** dengan ekstraksi fitur **TF-IDF**.
+Dashboard berbasis web interaktif yang menggunakan **Streamlit** dan **Python** untuk melakukan *multi-label text classification* pada artikel/berita ke dalam **90 kategori** (berdasarkan dataset Reuters) menggunakan algoritma **Decision Tree** dengan ekstraksi fitur **TF-IDF**.
 
-## 🚀 Fitur Utama
-1. **Aplikasi Dashboard (Streamlit)**: Memungkinkan uji teks secara *real-time* untuk memprediksi kategori hasil pertanian beserta visualisasinya.
-2. **Skrip Eksekusi Otomatis**: Menyediakan skrip `run_tahap5.py` dan `generate_final_report.py` untuk menjalankan seluruh eksperimen komparasi (BoW, N-Gram, TF-IDF).
+## Fitur Utama
+1. **Prediksi Teks Real-Time**: Ketik atau salin teks berita, dan model akan langsung menampilkan kategori yang relevan.
+2. **Model Siap Pakai (.pkl)**: Model yang sudah dilatih disimpan ke file `.pkl` sehingga aplikasi terbuka secara instan tanpa perlu melatih ulang.
+3. **Visualisasi Pohon Keputusan**: Menyertakan ilustrasi representatif dari algoritma Decision Tree.
+4. **Evaluasi Model Lengkap**: Menampilkan metrik perbandingan 3 eksperimen, Confusion Matrix, dan Feature Importance.
 
-## 🛠️ Persyaratan Instalasi
-Pastikan Anda sudah menginstal Python di komputer Anda. Sangat disarankan menggunakan **Virtual Environment**.
+## Persyaratan Instalasi
 
 1. **Clone Repository ini**
    ```bash
@@ -15,15 +16,15 @@ Pastikan Anda sudah menginstal Python di komputer Anda. Sangat disarankan menggu
    cd NLP-Dashboard
    ```
 
-2. **Buat Virtual Environment (Sangat disarankan)**
+2. **Buat Virtual Environment**
    ```bash
    python -m venv venv
    ```
-   *Aktivasi venv (Windows):*
+   Aktivasi venv (Windows):
    ```bash
    venv\Scripts\activate
    ```
-   *Aktivasi venv (Mac/Linux):*
+   Aktivasi venv (Mac/Linux):
    ```bash
    source venv/bin/activate
    ```
@@ -33,21 +34,24 @@ Pastikan Anda sudah menginstal Python di komputer Anda. Sangat disarankan menggu
    pip install -r requirements.txt
    ```
 
-## ▶️ Cara Menjalankan
+4. **Export Model (Wajib dijalankan sekali sebelum membuka dashboard)**
+   ```bash
+   python export_model.py
+   ```
+   Perintah ini akan melatih model dan menghasilkan file `model_tfidf.pkl`, `vectorizer.pkl`, dan `labels.pkl`.
 
-### 1. Menjalankan Dashboard Interaktif
-Pastikan *virtual environment* Anda aktif, lalu jalankan perintah ini di terminal:
+## Cara Menjalankan Dashboard
+Setelah model berhasil di-export, jalankan:
 ```bash
 streamlit run dashboard.py
 ```
 Browser akan otomatis terbuka di `http://localhost:8501`.
 
-### 2. Menjalankan Ulang Proses Pelatihan (Data Mining)
-Jika Anda ingin melatih ulang model dan menghasilkan laporan evaluasi `.docx` beserta pembaruan gambar matriks terbaru, Anda cukup menjalankan:
+## Cara Menjalankan Ulang Proses Pelatihan (Data Mining)
+Jika Anda ingin melatih ulang model dan menghasilkan laporan evaluasi `.docx` beserta pembaruan gambar grafik:
 ```bash
 python generate_final_report.py
 ```
-*(Catatan: pastikan file dataset `train.csv` berada di folder yang sama).*
 
 ---
 *Proyek ini dikembangkan sebagai bagian dari Tugas Data Mining Tahap 5 - Klasifikasi Teks NLP.*
