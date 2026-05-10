@@ -53,8 +53,8 @@ print("[3/4] Melatih model TF-IDF + Decision Tree (max_depth=5)...")
 tfidf = TfidfVectorizer(max_features=1000)
 X_tfidf = tfidf.fit_transform(X_raw)
 
-# max_depth=5 sesuai spesifikasi di laporan Tahap 5
-dt_model = DecisionTreeClassifier(random_state=42, max_depth=5)
+# Model tanpa batasan kedalaman agar prediksi lebih akurat di dashboard
+dt_model = DecisionTreeClassifier(random_state=42)
 dt_model.fit(X_tfidf, y)
 
 # Simpan ke file .pkl
