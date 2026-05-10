@@ -1,8 +1,8 @@
 """
 export_model.py
-Skrip untuk melatih model Decision Tree + TF-IDF menggunakan seluruh label
-dari dataset train.csv, lalu menyimpan hasilnya ke file .pkl agar bisa
-langsung dipakai oleh dashboard tanpa perlu re-training.
+Skrip untuk melatih model Decision Tree + TF-IDF menggunakan 41 label pertanian
+dari dataset train.csv (sesuai Tahap 2: Target Data pada laporan),
+lalu menyimpan hasilnya ke file .pkl agar bisa langsung dipakai oleh dashboard.
 """
 import pandas as pd
 import numpy as np
@@ -20,9 +20,16 @@ nltk.download('wordnet', quiet=True)
 print("[1/4] Memuat dataset...")
 df = pd.read_csv('train.csv')
 
-# Ambil seluruh label dari dataset (semua kolom kecuali 'text')
-all_labels = [col for col in df.columns if col != 'text']
-print(f"Total label ditemukan: {len(all_labels)}")
+# 41 label pertanian (sesuai Tahap 2: Target Data pada laporan)
+agri_labels = [
+    'barley', 'carcass', 'castor-oil', 'cocoa', 'coconut', 'coconut-oil', 'coffee', 
+    'copra-cake', 'corn', 'cotton', 'cotton-oil', 'grain', 'groundnut', 'groundnut-oil', 
+    'hog', 'l-cattle', 'lin-oil', 'livestock', 'meal-feed', 'oat', 'oilseed', 'orange', 
+    'palm-oil', 'palmkernel', 'potato', 'rape-oil', 'rapeseed', 'rice', 'rubber', 'rye', 
+    'sorghum', 'soy-meal', 'soy-oil', 'soybean', 'sugar', 'sun-meal', 'sun-oil', 'sunseed', 
+    'tea', 'veg-oil', 'wheat'
+]
+print(f"Menggunakan {len(agri_labels)} label pertanian")
 
 # Preprocessing
 lemmatizer = WordNetLemmatizer()
@@ -39,13 +46,14 @@ def clean_text(text):
 
 print("[2/4] Membersihkan teks...")
 X_raw = df['text'].apply(clean_text)
-y = df[all_labels].values
+y = df[agri_labels].values
 
 # TF-IDF Vectorization
-print("[3/4] Melatih model TF-IDF + Decision Tree...")
+print("[3/4] Melatih model TF-IDF + Decision Tree (max_depth=5)...")
 tfidf = TfidfVectorizer(max_features=1000)
 X_tfidf = tfidf.fit_transform(X_raw)
 
+# max_depth=5 sesuai spesifikasi di laporan Tahap 5
 dt_model = DecisionTreeClassifier(random_state=42, max_depth=5)
 dt_model.fit(X_tfidf, y)
 
@@ -58,9 +66,9 @@ with open('vectorizer.pkl', 'wb') as f:
     pickle.dump(tfidf, f)
 
 with open('labels.pkl', 'wb') as f:
-    pickle.dump(all_labels, f)
+    pickle.dump(agri_labels, f)
 
 print("Selesai! File yang dihasilkan:")
 print("  - model_tfidf.pkl (Model Decision Tree)")
 print("  - vectorizer.pkl  (TF-IDF Vectorizer)")
-print("  - labels.pkl      (Daftar semua label)")
+print("  - labels.pkl      (41 label pertanian)")
