@@ -48,27 +48,40 @@ print("[2/4] Membersihkan teks...")
 X_raw = df['text'].apply(clean_text)
 y = df[agri_labels].values
 
-# TF-IDF Vectorization
-print("[3/4] Melatih model TF-IDF + Decision Tree (max_depth=5)...")
-tfidf = TfidfVectorizer(max_features=1000)
-X_tfidf = tfidf.fit_transform(X_raw)
+from sklearn.feature_extraction.text import CountVectorizer
 
-# Model tanpa batasan kedalaman agar prediksi lebih akurat di dashboard
-dt_model = DecisionTreeClassifier(random_state=42)
-dt_model.fit(X_tfidf, y)
+# 1. Bag of Words (BoW)
+print("[3/4] Melatih model 1: Bag of Words (BoW)...")
+bow_vec = CountVectorizer(max_features=1000)
+X_bow = bow_vec.fit_transform(X_raw)
+dt_bow = DecisionTreeClassifier(random_state=42)
+dt_bow.fit(X_bow, y)
 
-# Simpan ke file .pkl
-print("[4/4] Menyimpan model ke file .pkl...")
-with open('model_tfidf.pkl', 'wb') as f:
-    pickle.dump(dt_model, f)
+with open('model_bow.pkl', 'wb') as f: pickle.dump(dt_bow, f)
+with open('vectorizer_bow.pkl', 'wb') as f: pickle.dump(bow_vec, f)
 
-with open('vectorizer.pkl', 'wb') as f:
-    pickle.dump(tfidf, f)
+# 2. N-Gram (Bigram)
+print("[4/4] Melatih model 2: N-Gram (Bigram)...")
+ngram_vec = CountVectorizer(ngram_range=(2,2), max_features=1000)
+X_ngram = ngram_vec.fit_transform(X_raw)
+dt_ngram = DecisionTreeClassifier(random_state=42)
+dt_ngram.fit(X_ngram, y)
 
+with open('model_ngram.pkl', 'wb') as f: pickle.dump(dt_ngram, f)
+with open('vectorizer_ngram.pkl', 'wb') as f: pickle.dump(ngram_vec, f)
+
+# 3. TF-IDF
+print("[5/4] Melatih model 3: TF-IDF...")
+tfidf_vec = TfidfVectorizer(max_features=1000)
+X_tfidf = tfidf_vec.fit_transform(X_raw)
+dt_tfidf = DecisionTreeClassifier(random_state=42)
+dt_tfidf.fit(X_tfidf, y)
+
+with open('model_tfidf.pkl', 'wb') as f: pickle.dump(dt_tfidf, f)
+with open('vectorizer_tfidf.pkl', 'wb') as f: pickle.dump(tfidf_vec, f)
+
+# Simpan label
 with open('labels.pkl', 'wb') as f:
     pickle.dump(agri_labels, f)
 
-print("Selesai! File yang dihasilkan:")
-print("  - model_tfidf.pkl (Model Decision Tree)")
-print("  - vectorizer.pkl  (TF-IDF Vectorizer)")
-print("  - labels.pkl      (41 label pertanian)")
+print("Selesai! File yang dihasilkan untuk BoW, N-Gram, dan TF-IDF sudah disimpan.")

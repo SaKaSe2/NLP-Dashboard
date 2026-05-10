@@ -35,31 +35,49 @@ def clean_text(text):
     cleaned_tokens = [lemmatizer.lemmatize(word) for word in tokens if word not in stop_words and len(word) > 1]
     return " ".join(cleaned_tokens)
 
-# Memuat model dari file .pkl
-@st.cache_resource(show_spinner="Memuat model Decision Tree dari file...")
-def load_model():
-    with open('model_tfidf.pkl', 'rb') as f:
+# Memuat model berdasarkan pilihan
+@st.cache_resource(show_spinner="Memuat model dari file...")
+def load_model(model_type):
+    if model_type == "Bag of Words (BoW)":
+        model_file = 'model_bow.pkl'
+        vec_file = 'vectorizer_bow.pkl'
+    elif model_type == "N-Gram (Bigram)":
+        model_file = 'model_ngram.pkl'
+        vec_file = 'vectorizer_ngram.pkl'
+    else: # Default TF-IDF
+        model_file = 'model_tfidf.pkl'
+        vec_file = 'vectorizer_tfidf.pkl'
+
+    with open(model_file, 'rb') as f:
         model = pickle.load(f)
-    with open('vectorizer.pkl', 'rb') as f:
+    with open(vec_file, 'rb') as f:
         vectorizer = pickle.load(f)
     with open('labels.pkl', 'rb') as f:
         labels = pickle.load(f)
+        
     return model, vectorizer, labels
-
-dt_model, tfidf_vectorizer, agri_labels = load_model()
 
 # --- TAMPILAN DASHBOARD ---
 st.title("Klasifikasi Artikel Berita Pertanian (NLP)")
-st.write(f"""
-Dashboard ini menggunakan model **Decision Tree** dengan ekstraksi fitur **TF-IDF** (Eksperimen 3) 
-untuk memprediksi klasifikasi multi-label artikel ke dalam **{len(agri_labels)} kategori pertanian**
-berdasarkan dataset Reuters-21578.
-""")
+st.write("Aplikasi ini menggunakan model **Decision Tree** untuk memprediksi klasifikasi multi-label artikel ke dalam **41 kategori pertanian** berdasarkan dataset Reuters-21578.")
+
+st.markdown("---")
 
 col1, col2 = st.columns([1, 1])
 
 with col1:
     st.subheader("Uji Prediksi Teks")
+    
+    # --- PILIHAN MODEL ---
+    selected_model = st.radio(
+        "Pilih Ekstraksi Fitur (Model) yang ingin digunakan:",
+        ("Bag of Words (BoW)", "N-Gram (Bigram)", "TF-IDF"),
+        index=2, # Default TF-IDF
+        horizontal=True
+    )
+    
+    dt_model, text_vectorizer, agri_labels = load_model(selected_model)
+
     st.caption("Ketik atau salin teks berita pertanian berbahasa Inggris di sini:")
 
     # Contoh teks pertanian yang bisa langsung dipakai
@@ -82,13 +100,13 @@ with col1:
 
     if st.button("Analisis Teks", type="primary"):
         if user_input.strip():
-            with st.spinner("Memproses dan memprediksi..."):
+            with st.spinner(f"Memproses menggunakan model {selected_model}..."):
                 # 1. Cleaning
                 cleaned_input = clean_text(user_input)
                 # 2. Vectorization
-                input_tfidf = tfidf_vectorizer.transform([cleaned_input])
+                input_vec = text_vectorizer.transform([cleaned_input])
                 # 3. Predict
-                prediction = dt_model.predict(input_tfidf)[0]
+                prediction = dt_model.predict(input_vec)[0]
 
                 # 4. Ambil label yang bernilai 1 (Positif)
                 predicted_labels = [agri_labels[i] for i, val in enumerate(prediction) if val == 1]
@@ -111,7 +129,7 @@ with col1:
 
 with col2:
     st.subheader("Cara Kerja Model (Visualisasi)")
-    st.write("Visualisasi pohon keputusan di bawah ini adalah versi sederhana yang difokuskan pada kategori mayoritas untuk memperlihatkan bagaimana model mengambil keputusan secara berjenjang.")
+    st.write("Visualisasi pohon keputusan di bawah ini adalah versi sederhana yang difokuskan pada kategori mayoritas (Grain) untuk memperlihatkan bagaimana model mengambil keputusan secara berjenjang.")
     if os.path.exists("decision_tree_vis.png"):
         st.image("decision_tree_vis.png", use_container_width=True)
     else:
@@ -119,17 +137,28 @@ with col2:
 
 st.markdown("---")
 st.subheader("Evaluasi dan Performa Keseluruhan")
-tab_eval1, tab_eval2, tab_eval3 = st.tabs(["Perbandingan Metrik", "Confusion Matrix (TF-IDF)", "Feature Importance"])
+tab_eval1, tab_eval2, tab_eval3 = st.tabs(["Perbandingan Metrik", "Confusion Matrix", "Feature Importance"])
 
 with tab_eval1:
     if os.path.exists("eval_comparison.png"):
-        st.image("eval_comparison.png", caption="Perbandingan Metrik Evaluasi", use_container_width=True)
+        st.image("eval_comparison.png", caption="Perbandingan Metrik Evaluasi untuk ke-3 Model", use_container_width=True)
 with tab_eval2:
-    if os.path.exists("cm_tfidf.png"):
-        st.image("cm_tfidf.png", caption="Confusion Matrix untuk 5 kategori teratas", use_container_width=True)
+    col_cm1, col_cm2, col_cm3 = st.columns(3)
+    with col_cm1:
+        if os.path.exists("cm_bow.png"): st.image("cm_bow.png", caption="CM BoW", use_container_width=True)
+    with col_cm2:
+        if os.path.exists("cm_ngram.png"): st.image("cm_ngram.png", caption="CM N-Gram", use_container_width=True)
+    with col_cm3:
+        if os.path.exists("cm_tfidf.png"): st.image("cm_tfidf.png", caption="CM TF-IDF", use_container_width=True)
+
 with tab_eval3:
-    if os.path.exists("fi_tfidf.png"):
-        st.image("fi_tfidf.png", caption="15 Fitur (Kata) Terpenting dalam Model", use_container_width=True)
+    col_fi1, col_fi2, col_fi3 = st.columns(3)
+    with col_fi1:
+        if os.path.exists("fi_bow.png"): st.image("fi_bow.png", caption="FI BoW", use_container_width=True)
+    with col_fi2:
+        if os.path.exists("fi_ngram.png"): st.image("fi_ngram.png", caption="FI N-Gram", use_container_width=True)
+    with col_fi3:
+        if os.path.exists("fi_tfidf.png"): st.image("fi_tfidf.png", caption="FI TF-IDF", use_container_width=True)
 
 # Daftar kategori yang didukung
 with st.expander("Lihat 41 Kategori Pertanian yang Didukung"):
