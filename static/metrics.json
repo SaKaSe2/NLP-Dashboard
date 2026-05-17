@@ -1,0 +1,32 @@
+{
+    "bow": {
+        "accuracy": "79.6%",
+        "precision": "87.0%",
+        "recall": "77.4%",
+        "f1": "81.9%"
+    },
+    "ngram": {
+        "accuracy": "75.4%",
+        "precision": "86.8%",
+        "recall": "77.4%",
+        "f1": "81.8%"
+    },
+    "tfidf": {
+        "accuracy": "80.0%",
+        "precision": "86.6%",
+        "recall": "78.0%",
+        "f1": "82.0%"
+    },
+    "w2v": {
+        "accuracy": "82.5%",
+        "precision": "86.6%",
+        "recall": "77.8%",
+        "f1": "81.9%"
+    },
+    "bert": {
+        "accuracy": "86.9%",
+        "precision": "87.0%",
+        "recall": "77.4%",
+        "f1": "81.8%"
+    }
+}
