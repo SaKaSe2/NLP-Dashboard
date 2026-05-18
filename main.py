@@ -81,6 +81,50 @@ def get_w2v_avg(tokens: list, w2v) -> np.ndarray:
     vecs = [w2v.wv[w] for w in tokens if w in w2v.wv]
     return np.mean(vecs, axis=0) if len(vecs) > 0 else np.zeros(100)
 
+def extract_decision_path(estimator, input_vec, vec, model_key):
+    """Mengekstrak seluruh pohon keputusan dan menyorot jalur yang aktif."""
+    tree_ = estimator.tree_
+    node_indicator = estimator.decision_path(input_vec)
+    active_nodes = set(node_indicator.indices)
+    
+    vocab = {}
+    if model_key in ("bow", "ngram", "tfidf") and hasattr(vec, "vocabulary_"):
+        vocab = {v: k for k, v in vec.vocabulary_.items()}
+
+    nodes = []
+    edges = []
+
+    for i in range(tree_.node_count):
+        if tree_.feature[i] != -2: # bukan leaf
+            feature_idx = tree_.feature[i]
+            feature_name = vocab.get(feature_idx, f"Dim_{feature_idx}")
+            threshold = tree_.threshold[i]
+            label = f"{feature_name} <= {threshold:.2f}"
+            nodes.append(f"    N{i}[\"{label}\"]")
+        else: # leaf
+            val = tree_.value[i][0]
+            predicted_class = int(np.argmax(val))
+            prob = val[predicted_class] / np.sum(val)
+            label = f"Class {predicted_class}\\n({prob*100:.0f}%)"
+            nodes.append(f"    N{i}((\"{label}\"))")
+            
+        left_child = tree_.children_left[i]
+        right_child = tree_.children_right[i]
+        
+        if left_child != -1:
+            edges.append(f"    N{i} -->|True| N{left_child}")
+        if right_child != -1:
+            edges.append(f"    N{i} -->|False| N{right_child}")
+
+    mermaid_str = "graph TD\n"
+    mermaid_str += "\n".join(nodes) + "\n"
+    mermaid_str += "\n".join(edges) + "\n"
+    
+    for node_id in active_nodes:
+        mermaid_str += f"    style N{node_id} fill:#7e3af2,stroke:#fff,color:#fff\n"
+
+    return mermaid_str
+
 def predict_text(text: str, model_key: str) -> dict:
     """Prediksi teks menggunakan model yang dipilih."""
     model = models[model_key]
@@ -103,11 +147,34 @@ def predict_text(text: str, model_key: str) -> dict:
 
     prediction = model.predict(input_vec)[0]
     predicted_labels = [agri_labels[i] for i, val in enumerate(prediction) if val == 1]
+    
+    # Get probabilities for chart
+    proba = model.predict_proba(input_vec)
+    probabilities = {agri_labels[i]: round(p[0][1] * 100, 2) for i, p in enumerate(proba)}
+
+    # Extract Decision Path
+    # Pilih kategori yang terdeteksi, atau kategori dengan probabilitas tertinggi jika tidak ada
+    target_idx = 0
+    if 1 in prediction:
+        target_idx = prediction.tolist().index(1)
+    else:
+        probs = [p[0][1] for p in proba]
+        target_idx = np.argmax(probs)
+        
+    path_label = agri_labels[target_idx]
+    
+    # Hanya generate decision tree untuk model tradisional (Eks 1-3)
+    decision_path = None
+    if model_key in ("bow", "ngram", "tfidf"):
+        decision_path = extract_decision_path(model.estimators_[target_idx], input_vec, vectorizers.get(model_key), model_key)
 
     return {
         "cleaned_text": cleaned,
         "predicted_labels": predicted_labels,
         "raw_prediction": prediction.tolist(),
+        "probabilities": probabilities,
+        "decision_path": decision_path,
+        "path_label": path_label.upper(),
         "model_used": model_key,
     }
 

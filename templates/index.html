@@ -15,6 +15,8 @@
       defer
     ></script>
     <script src="/static/assets/js/init-alpine.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <style>
       .loader {
         border: 4px solid #f3f3f3;
@@ -29,13 +31,33 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
+      .batik-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('/static/batik_bg.png');
+        background-repeat: repeat;
+        background-size: 300px;
+        opacity: 0.05;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .theme-dark .batik-overlay {
+        opacity: 0.03;
+        filter: invert(1); /* Mencerahkan pola batik pada mode gelap */
+      }
     </style>
   </head>
   <body>
     <div
-      class="flex h-screen bg-gray-50 dark:bg-gray-900"
+      class="flex h-screen bg-gray-50 dark:bg-gray-900 relative"
       :class="{ 'overflow-hidden': isSideMenuOpen }"
     >
+      <!-- Batik Background Overlay -->
+      <div class="batik-overlay"></div>
+      
       <!-- Desktop sidebar -->
       <aside class="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0">
         <div class="py-4 text-gray-500 dark:text-gray-400">
@@ -237,6 +259,19 @@
                     
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-4 mb-2">Model Used: <span id="modelUsedLabel" class="font-semibold text-purple-600 dark:text-purple-400"></span></p>
 
+                    <div id="chartContainer" style="display: none;" class="mt-4 mb-4">
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Model Confidence / Probabilities:</p>
+                        <canvas id="probaChart" height="150"></canvas>
+                    </div>
+
+                    <div id="treeContainer" style="display: none;" class="mt-6 mb-4">
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            Decision Tree Path (<span id="pathLabel" class="text-purple-600 dark:text-purple-400"></span>):
+                        </p>
+                        <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto text-center" id="mermaidOutput">
+                        </div>
+                    </div>
+
                     <div id="metricsContainer" style="display: none;" class="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                         <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Model Performance on Test Data</p>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -271,6 +306,10 @@
     <!-- Prediction Logic -->
     <script>
         let modelMetrics = {};
+        let probaChartInstance = null;
+        
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: false, theme: document.documentElement.classList.contains('theme-dark') ? 'dark' : 'default' });
 
         // Fetch metrics on load
         fetch('/static/metrics.json')
@@ -345,6 +384,64 @@
                 document.getElementById('cleanedText').textContent = data.cleaned_text;
                 document.getElementById('modelUsedLabel').textContent = modelName;
                 
+                // Conditionally Show/Hide Visualizations
+                const isTraditional = ['bow', 'ngram', 'tfidf'].includes(data.model_used);
+
+                if (isTraditional && data.decision_path) {
+                    // Show Tree, Hide Bar Chart
+                    document.getElementById('chartContainer').style.display = 'none';
+                    document.getElementById('treeContainer').style.display = 'block';
+                    document.getElementById('pathLabel').textContent = data.path_label;
+
+                    const mermaidContainer = document.getElementById('mermaidOutput');
+                    mermaidContainer.innerHTML = ''; // clear previous
+                    const mermaidDiv = document.createElement('div');
+                    mermaidDiv.className = 'mermaid';
+                    mermaidDiv.textContent = data.decision_path;
+                    mermaidContainer.appendChild(mermaidDiv);
+                    
+                    // re-init mermaid for the new element
+                    mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+                } else {
+                    // Show Bar Chart, Hide Tree (for W2V and BERT)
+                    document.getElementById('treeContainer').style.display = 'none';
+                    document.getElementById('chartContainer').style.display = 'block';
+                    
+                    // Render Chart
+                    const chartLabels = Object.keys(data.probabilities).map(l => l.toUpperCase());
+                    const chartData = Object.values(data.probabilities);
+                    
+                    if(probaChartInstance) {
+                        probaChartInstance.destroy();
+                    }
+                    
+                    const ctx = document.getElementById('probaChart').getContext('2d');
+                    probaChartInstance = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [{
+                                label: 'Confidence (%)',
+                                data: chartData,
+                                backgroundColor: chartData.map(val => val > 50 ? 'rgba(126, 58, 242, 0.8)' : 'rgba(156, 163, 175, 0.5)'),
+                                borderColor: chartData.map(val => val > 50 ? 'rgba(126, 58, 242, 1)' : 'rgba(156, 163, 175, 1)'),
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100
+                                }
+                            },
+                            plugins: {
+                                legend: { display: false }
+                            }
+                        }
+                    });
+                }
+
                 // Show Metrics
                 if(modelMetrics[model]) {
                     document.getElementById('accMetric').textContent = modelMetrics[model].accuracy;
