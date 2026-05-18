@@ -183,10 +183,11 @@ def predict_text(text: str, model_key: str) -> dict:
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     """Render halaman utama dashboard."""
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "labels": agri_labels,
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={"request": request, "labels": agri_labels},
+    )
 
 @app.post("/predict")
 async def predict(request: Request):
