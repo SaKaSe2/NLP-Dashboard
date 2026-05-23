@@ -1,32 +1,32 @@
 {
     "bow": {
-        "accuracy": "79.6%",
-        "precision": "87.0%",
-        "recall": "77.4%",
-        "f1": "81.9%"
+        "accuracy": "87.1%",
+        "precision": "56.4%",
+        "recall": "92.8%",
+        "f1": "70.2%"
     },
     "ngram": {
-        "accuracy": "75.4%",
-        "precision": "86.8%",
-        "recall": "77.4%",
-        "f1": "81.8%"
+        "accuracy": "79.4%",
+        "precision": "22.2%",
+        "recall": "61.3%",
+        "f1": "32.6%"
     },
     "tfidf": {
-        "accuracy": "80.0%",
-        "precision": "86.6%",
-        "recall": "78.0%",
-        "f1": "82.0%"
+        "accuracy": "86.8%",
+        "precision": "56.1%",
+        "recall": "89.0%",
+        "f1": "68.8%"
     },
     "w2v": {
-        "accuracy": "82.5%",
-        "precision": "86.6%",
-        "recall": "77.8%",
-        "f1": "81.9%"
+        "accuracy": "68.6%",
+        "precision": "15.7%",
+        "recall": "75.9%",
+        "f1": "26.1%"
     },
     "bert": {
-        "accuracy": "86.9%",
-        "precision": "87.0%",
-        "recall": "77.4%",
-        "f1": "81.8%"
+        "accuracy": "68.6%",
+        "precision": "15.7%",
+        "recall": "75.9%",
+        "f1": "26.1%"
     }
 }

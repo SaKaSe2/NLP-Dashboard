@@ -25,8 +25,8 @@ print("[1/6] Memuat dataset...")
 df_train = pd.read_csv('../train.csv')
 df_test = pd.read_csv('../test.csv')
 
-# 5 label pertanian (sesuai Comprehensive notebook)
-agri_labels = ['oilseed', 'sugar', 'corn', 'wheat', 'grain']
+# 13 label pertanian
+agri_labels = ['grain', 'wheat', 'corn', 'sugar', 'oilseed', 'coffee', 'veg-oil', 'livestock', 'soybean', 'cocoa', 'carcass', 'cotton', 'barley']
 
 X_train_raw = df_train['text'].astype(str).tolist()
 y_train = df_train[agri_labels]
