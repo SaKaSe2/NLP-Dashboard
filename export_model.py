@@ -22,8 +22,8 @@ from gensim.models import Word2Vec
 
 # --- 1. Load Dataset ---
 print("[1/6] Memuat dataset...")
-df_train = pd.read_csv('../train.csv')
-df_test = pd.read_csv('../test.csv')
+df_train = pd.read_csv('train.csv')
+df_test = pd.read_csv('test.csv')
 
 # 13 label pertanian
 agri_labels = ['grain', 'wheat', 'corn', 'sugar', 'oilseed', 'coffee', 'veg-oil', 'livestock', 'soybean', 'cocoa', 'carcass', 'cotton', 'barley']
