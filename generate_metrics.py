@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 print("Loading test data...")
 df_test = pd.read_csv('../test.csv')
-agri_labels = ['oilseed', 'sugar', 'corn', 'wheat', 'grain']
+agri_labels = ['grain', 'wheat', 'corn', 'sugar', 'oilseed', 'coffee', 'veg-oil', 'livestock', 'soybean', 'cocoa', 'carcass', 'cotton', 'barley']
 X_test_raw = df_test['text'].astype(str).tolist()
 y_test = df_test[agri_labels]
 
